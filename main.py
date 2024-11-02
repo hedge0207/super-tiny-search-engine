@@ -4,11 +4,13 @@ from typing import Annotated
 from fastapi import FastAPI, Depends
 import uvicorn
 
+from model.common import TOKENIZERS
 from model.index import IndexRequest
 from model.search import SearchRequest
-from core.index import Index
-from core.search import Search
-from core.tokenizer.standard import StandardTokenizer
+from model.analyze import AnalyzeRequest
+from service.index import Index
+from service.search import Search
+from core.analyzer import Analyzer, analyzer_factory
 from utils import create_data_files
 
 
@@ -17,19 +19,22 @@ async def lifespan(app: FastAPI):
     create_data_files()
     yield
 
+
 app = FastAPI(lifespan=lifespan)
 
-TOKENIZERS = {
-    "standard": StandardTokenizer
-}
+AnalyzerDep = Annotated[Analyzer, Depends(analyzer_factory)]
 
 @app.post("/index")
-def index(request: IndexRequest, service: Annotated[Index, Depends(Index)]):
-    service.index(request.docs, TOKENIZERS[request.tokenizer.value]())
+def index(request: IndexRequest, analyzer: AnalyzerDep, service: Annotated[Index, Depends(Index)]):
+    service.index(request.docs, analyzer)
 
 @app.get("/search")
-def search(request: SearchRequest, service: Annotated[Search, Depends(Search)]):
-    return service.search(request.query, TOKENIZERS[request.tokenizer.value]())
+def search(request: SearchRequest,  analyzer: AnalyzerDep, service: Annotated[Search, Depends(Search)]):
+    return service.search(request.query, analyzer)
+
+@app.get("/analyze")
+def analyze(request: AnalyzeRequest, analyzer: AnalyzerDep):
+    return analyzer.analyze(request.text)
     
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from model.common import Tokenizer
+from model.analyzer_base import AnalyzerRequest
 
 
 class Document(BaseModel):
@@ -7,6 +7,5 @@ class Document(BaseModel):
     text: str
 
 
-class IndexRequest(BaseModel):
+class IndexRequest(AnalyzerRequest):
     docs: list[Document]
-    tokenizer: Tokenizer

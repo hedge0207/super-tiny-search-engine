@@ -1,7 +1,5 @@
-from pydantic import BaseModel
-from model.common import Tokenizer
+from model.analyzer_base import AnalyzerRequest
 
 
-class SearchRequest(BaseModel):
+class SearchRequest(AnalyzerRequest):
     query: str
-    tokenizer: Tokenizer
