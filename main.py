@@ -4,7 +4,6 @@ from typing import Annotated
 from fastapi import FastAPI, Depends
 import uvicorn
 
-from model.common import TOKENIZERS
 from model.index import IndexRequest
 from model.search import SearchRequest
 from model.analyze import AnalyzeRequest
