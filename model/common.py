@@ -7,6 +7,7 @@ from core.token_filter.lowercase import Lowercase
 
 class TokenizerEnum(Enum):
     STANDARD = "standard"
+    KOREAN = "korean"
 
 
 class TokenFilterEnum(Enum):
