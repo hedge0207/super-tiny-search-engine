@@ -29,8 +29,6 @@ class CharTermAttributeImple(AttributeImpl):
     def terms(self, terms: list[str]):
         self._terms = terms
     
-    
-
 
 class AttributeSource:
 
@@ -47,3 +45,7 @@ class AttributeSource:
                 att_impl = CharTermAttributeImple()
             self.attributes[att_class] = att_impl
         return att_impl
+    
+    def get_attribute(self, att_class: Type[T]) -> AttributeImpl:
+        return self.attributes.get(att_class)
+

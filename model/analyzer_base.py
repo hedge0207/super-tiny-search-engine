@@ -1,9 +1,10 @@
 from pydantic import BaseModel
-from model.common import TokenizerEnum, TokenFilterEnum
+from model.common import AnalyzerEnum, TokenizerEnum, TokenFilterEnum
 
 
 class _Analyzer(BaseModel):
-    tokenizer: TokenizerEnum = TokenizerEnum.STANDARD
+    analyzer : AnalyzerEnum = AnalyzerEnum.STANDARD
+    tokenizer: TokenizerEnum = None
     token_filters: list[TokenFilterEnum] = []
 
 

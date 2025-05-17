@@ -1,13 +1,16 @@
 import json
 
-from core.analyzer import Analyzer
+from core.attribute import CharTermAttribute
+from core.analyzer.analyzer import Analyzer
 from config.config import config
 
 
 class Search:
     
     def search(self, query: str, analyzer: Analyzer):
-        terms = analyzer.analyze(query)
+        token_stream = analyzer.create_token_stream(query)
+        token_stream.tokenize()
+        terms = token_stream.get_attribute(CharTermAttribute).terms
         with open(config.segment_file_path, "r") as f:
             segment = json.load(f)
         

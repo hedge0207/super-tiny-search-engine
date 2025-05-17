@@ -9,7 +9,9 @@ from model.search import SearchRequest
 from model.analyze import AnalyzeRequest
 from service.index import Index
 from service.search import Search
-from core.analyzer import Analyzer, analyzer_factory
+from core.analyzer.analyzer import Analyzer
+from core.analyzer_factory import create_analyzer
+from core.attribute import CharTermAttribute
 from utils import create_data_files
 
 
@@ -21,7 +23,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-AnalyzerDep = Annotated[Analyzer, Depends(analyzer_factory)]
+AnalyzerDep = Annotated[Analyzer, Depends(create_analyzer)]
 
 @app.post("/index")
 def index(request: IndexRequest, analyzer: AnalyzerDep, service: Annotated[Index, Depends(Index)]):
@@ -33,7 +35,9 @@ def search(request: SearchRequest,  analyzer: AnalyzerDep, service: Annotated[Se
 
 @app.get("/analyze")
 def analyze(request: AnalyzeRequest, analyzer: AnalyzerDep):
-    return analyzer.analyze(request.text)
+    token_stream = analyzer.create_token_stream(request.text)
+    token_stream.tokenize()
+    return token_stream.get_attribute(CharTermAttribute)
     
 
 if __name__ == "__main__":

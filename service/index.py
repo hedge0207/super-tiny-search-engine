@@ -1,7 +1,8 @@
 import uuid
 import json
 
-from core.analyzer import Analyzer
+from core.analyzer.analyzer import Analyzer
+from core.attribute import CharTermAttribute
 from model.index import Document
 from config.config import config
 
@@ -21,9 +22,11 @@ class Index:
             source = json.load(f)
         
         for doc in docs:
+            token_stream = analyzer.create_token_stream(doc.text)
             doc_id = doc.doc_id or self._create_uuid()
             source[doc_id] = doc.text
-            tokens = analyzer.analyze(doc.text)
+            token_stream.tokenize()
+            tokens = token_stream.get_attribute(CharTermAttribute).terms
             for token in tokens:
                 if token in segment:
                     if doc_id not in segment[token]:
